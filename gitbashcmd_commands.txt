@@ -1,0 +1,75 @@
+<----------------------------Local------------------------->
+WORKING DIRECTORY | STAGING AREA | REPOSITORY (.git folder) | Remote
+
+Untracked files [not added] --> Staged [git add done]
+Unchanged [not changed] --> Unstaged [changed] --> Staged [git add done]
+http://stackoverflow.com/questions/7564841/concept-of-git-tracking-and-git-staging
+
+
+------------
+GIT COMMANDS
+------------
+
+sublime_text ~/.gitconfig
+
+git status
+git add -A 
+	*removed, named, deleted, modified
+git add . 
+	*modified files only
+git add -u
+	*update index
+git commit -m "Message"
+
+git push origin (local) master (branch)
+
+git remote add origin [github link]
+git push -u origin master
+
+cd .. 
+cd url to navigate to
+
+git clone [github link]
+
+git pull origin master 
+	*checking if there is any updates from the master branch
+
+git commit -am "Message"
+	*only for tracked files [check by typing git ls-files]
+
+git checkout -- [file]
+
+git mv [old name] [new name]
+
+[note: if using mv directly, it will recognize as a delete/ new file]
+
+USER=YOURUSERNAME;PAGE=1; curl "https://api.github.com/users/$USER/repos?page=$PAGE&per_page=100" | grep -e 'git_url*' | cut -d \" -f 4 | xargs -L1 git clone
+	*clone all repositories
+
+
+---------------
+BASH SHORTCUTS
+---------------
+cd ../../
+
+rm -rf [folder/ file name]
+
+mkdir
+
+pwd 
+
+ls
+
+[text editor] [file name]
+	*to open file
+
+clear
+
+
+----
+CMD
+----
+[software] -k install 
+[software] -k uninstall
+
+netstat 
