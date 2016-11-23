@@ -1,6 +1,4 @@
 
-
-
 <----------------------------Local------------------------->
 WORKING DIRECTORY | STAGING AREA | REPOSITORY (.git folder) | REMOTE
 
@@ -8,7 +6,6 @@ WORKING DIRECTORY | STAGING AREA | REPOSITORY (.git folder) | REMOTE
 ------------
 GIT COMMANDS
 ------------
-
 
 git status
 git add -A
@@ -30,12 +27,18 @@ git pull origin master
 git commit -am "Message"
 	*only for tracked files [check by typing git ls-files]
 
+git checkout -- [file]
+
+git mv [old name] [new name]
+
+USER=YOURUSERNAME;PAGE=1; curl "https://api.github.com/users/$USER/repos?page=$PAGE&per_page=100" | grep -e 'git_url*' | cut -d \" -f 4 | xargs -L1 git clone
+	*clone all repositories
+
 
 
 ---------------
 BASH SHORTCUTS
 ---------------
-
 cd ../../
 
 rm -rf [folder/ file name]
@@ -49,12 +52,12 @@ ls
 [text editor] [file name]
 	*to open file
 
+clear
 
 
 ----
 CMD
 ----
-
 [software] -k install 
 [software] -k uninstall
 
