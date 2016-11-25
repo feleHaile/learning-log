@@ -1,0 +1,18 @@
+R Studio IDE shortcuts 
+----------------------
+Ctrl U         // delete before cursor
+Ctrl K         // delete after cursor 
+Ctrl Alt R     // make new section
+Ctrl D         // delete line
+Ctrl W         // close window
+Alt -          // <- assignment operator
+Ctrl Shift M   // %>% pipe
+Ctr Alt T      // run section of code
+tab            // suggestions, and tab again to accept
+
+Ctrl 1         // move to source
+Ctrl 2         // move to console
+
+Ctrl L         // clear console
+
+Ctrl Alt M     // commit git project

@@ -27,7 +27,7 @@ git remote add origin [github link]
 git push -u origin master
 
 cd .. 
-cd url to navigate to
+cd url to navigate 
 
 git clone [github link]
 
@@ -36,6 +36,8 @@ git pull origin master
 
 git commit -am "Message"
 	*only for tracked files [check by typing git ls-files]
+
+git reset HEAD [file name]
 
 git checkout -- [file]
 
@@ -46,6 +48,35 @@ git mv [old name] [new name]
 USER=YOURUSERNAME;PAGE=1; curl "https://api.github.com/users/$USER/repos?page=$PAGE&per_page=100" | grep -e 'git_url*' | cut -d \" -f 4 | xargs -L1 git clone
 	*clone all repositories
 
+git help log 
+	*get the help log
+
+git log
+	*getting the history
+
+git log --abbrev-commit
+git log --oneline --graph --decorate
+git log [commitSHA, first 7 digits]...[commitSHA, first 7 digits]
+git log --since="3 days ago"
+git log -- [file name]
+git log --follow -- [dir]/[dir]/[filename]
+git show [SHA]
+
+sublime_text .gitignore
+
+
+.GITIGNORE
+-----------
+*.log 
+	*any file with a log ending
+
+
+ALIAS
+-----
+
+git config --global alias.[name] "output"
+sublime_text ~/.gitconfig
+
 
 ---------------
 BASH SHORTCUTS
@@ -53,6 +84,8 @@ BASH SHORTCUTS
 cd ../../
 
 rm -rf [folder/ file name]
+	*-r recursively walk the folder
+	*-f will forcefully delete the folder
 
 mkdir
 
@@ -73,3 +106,4 @@ CMD
 [software] -k uninstall
 
 netstat 
+

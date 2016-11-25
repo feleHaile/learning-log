@@ -3,12 +3,26 @@
 colnames(variable) <- "newname"
 
 ########################################
+# mutate
+housing.sum <- aggregate(housing["Home.Value"], housing["State"], FUN=mean)
+
+# aggregate
+
+# melt
+# dcast
+
+
+########################################
+# joins: dplyr
+# melt/cast: plyr
+# split and apply data functions: ddply
+
 
 ## merging tables based on one variable
 # based on tutorial: http://stat545.com/bit001_dplyr-cheatsheet.html
 
 # load library
-library(dplyr)
+library(dplyr) # library for data manipulation
 library(readr)
 
 # data frame 1
@@ -88,3 +102,9 @@ head(melted)
 # cast data, making it back into long format
 acast(data = melted, formula = Month ~ variable, fun.aggregate =mean, 
       subset = .(variable == "Ozone"))
+
+########################################
+
+## ddply 
+# http://www.cookbook-r.com/Manipulating_data/Summarizing_data/
+# https://www.rdocumentation.org/packages/plyr/versions/1.8.4/topics/ddply
