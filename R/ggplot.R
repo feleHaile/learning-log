@@ -6,8 +6,14 @@
 # 4) add the settings needed to make the plot look good, such as axis labels
 
 # notes:
-
 # axis and points plotted are on different settings
+
+# main functions of ggplot
+
+# scales
+# geom types and data transformation
+# faceting
+
 
 # Useful GGPLOT2 functions ------------------------------------------------
  
@@ -200,7 +206,7 @@ p5 + theme_new
 
 ############################################################################
 
-## TIME GRAPHIC
+# ECONOMIST GRAPH ---------------------------------------------------------
 
 dat <- as.data.frame(read.csv("datasets/EconomistData.csv", header=T))
 
@@ -338,6 +344,7 @@ grid.text(paste0("R² = ",
 
 dev.off()
 
+
 # GGPLOT2 tutorial with time ----------------------------------------------
 # Tutorial from: http://neondataskills.org/R/time-series-plot-ggplot/
 
@@ -399,8 +406,65 @@ gg3b <- gg2 + scale_x_date(labels=date_format("%b %Y"),
                            breaks=date_breaks("6 months"))
 gg3b
 
-# subset dataset by time
-startTime <- as.Date("2011-01-01")
-endTime <- as.Date("2012-01-01")
+# plot only time which is preferred
+start <- as.Date("2011-01-01")
+end <- as.Date("2012-01-01")
+
+gg.2011 <- gg1 + ggtitle("Air temperature \n 2011") +
+  geom_point(na.rm=TRUE, color="purple", size=1) +
+  xlab("Date") + ylab("Air Temperature (C)") +
+  scale_x_date(limits=c(start,end), breaks=date_breaks("1 year"),
+                 labels=date_format("%b %Y"))
+gg.2011
 
 
+
+
+# DRAWING ON DIAGRAM ------------------------------------------------------
+
+# Source: https://stat.ethz.ch/R-manual/R-devel/library/grid/html/grid.text.html
+
+grid.newpage()
+x <- stats::runif(20)
+y <- stats::runif(20)
+rot <- stats::runif(20, 0, 360)
+grid.text("SOMETHING NICE AND BIG", x=x, y=y, rot=rot,
+          gp=gpar(fontsize=20, col="grey"))
+grid.text("SOMETHING NICE AND BIG", x=x, y=y, rot=rot,
+          gp=gpar(fontsize=20), check=TRUE)
+
+
+grid.newpage()
+draw.text <- function(just, i, j) {
+  grid.text("ABCD", x=x[j], y=y[i], just=just)
+  grid.text(deparse(substitute(just)), x=x[j], y=y[i] + unit(2, "lines"),
+            gp=gpar(col="grey", fontsize=8))
+}
+
+x <- unit(1:4/5, "npc")
+y <- unit(1:4/5, "npc")
+
+grid.grill(h=y, v=x, gp=gpar(col="grey"))
+
+draw.text(c("bottom"), 1, 1)
+draw.text(c("left", "bottom"), 2, 1)
+draw.text(c("right", "bottom"), 3, 1)
+draw.text(c("centre", "bottom"), 4, 1)
+draw.text(c("centre"), 1, 2)
+draw.text(c("left", "centre"), 2, 2)
+draw.text(c("right", "centre"), 3, 2)
+draw.text(c("centre", "centre"), 4, 2)
+draw.text(c("top"), 1, 3)
+draw.text(c("left", "top"), 2, 3)
+draw.text(c("right", "top"), 3, 3)
+draw.text(c("centre", "top"), 4, 3)
+draw.text(c(), 1, 4)
+draw.text(c("left"), 2, 4)
+draw.text(c("right"), 3, 4)
+draw.text(c("centre"), 4, 4)
+
+
+# GRID ARRANGE  -----------------------------------------------------------
+
+# https://cran.r-project.org/web/packages/gridExtra/vignettes/arrangeGrob.html
+# http://www.sthda.com/english/wiki/ggplot2-easy-way-to-mix-multiple-graphs-on-the-same-page-r-software-and-data-visualization

@@ -1,3 +1,9 @@
+---------------------
+quick command aliases
+---------------------
+healthspan 
+desktop
+
 <----------------------------Local------------------------->
 WORKING DIRECTORY | STAGING AREA | REPOSITORY (.git folder) | Remote
 
