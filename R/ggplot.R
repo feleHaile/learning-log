@@ -1,3 +1,5 @@
+# OVERVIEW ----------------------------------------------------------------
+
 # 1) put your data frame in order; 
 # 2) set up a basic plot with the ggplot function; 
 # 3) add one extra geom at at time (optional if you make a simple plot 
@@ -8,14 +10,22 @@
 # notes:
 # axis and points plotted are on different settings
 
-# main functions of ggplot
+# Main functions of ggplot2, and arguments involved
 
 # scales
-# geom types and data transformation
+# geom types and data transformation # http://docs.ggplot2.org/current/
 # faceting
+# themes: colour schemes, legend positions
+# labels
+# annotation
+
+# COMPLEMENTARY LIBRARIES -------------------------------------------
+library(ggvis)     # for interactivity purposes
+library(grid)      # for annotation purposes 
+library(gridExtra) # for annotation purposes
 
 
-# Useful GGPLOT2 functions ------------------------------------------------
+# USEFUL GGPLOT2 FUNCTIONS ------------------------------------------------
  
 # geom_type
 # labs
@@ -27,8 +37,7 @@
 # color
 # shape
 
-# GGPLOT2 tutorial --------------------------------------------------------
-
+# TUT1: BASIC PRIMER FOR GGPLOT2 ------------------------------------------------
 # Tutorial from: http://tutorials.iq.harvard.edu/R/Rgraphics/Rgraphics.html
 # Data from: http://datatoolkits.lincolninst.edu/subcenters/land-values/land-prices-by-state.asp
 
@@ -206,7 +215,7 @@ p5 + theme_new
 
 ############################################################################
 
-# ECONOMIST GRAPH ---------------------------------------------------------
+# TUT2: ECONOMIST GRAPH ---------------------------------------------------------
 
 dat <- as.data.frame(read.csv("datasets/EconomistData.csv", header=T))
 
@@ -240,7 +249,6 @@ e3
 # Labelling points
 names(dat)
 dat$Country
-
 
 # How to choose these points?? 
 # Out of SE
@@ -345,7 +353,8 @@ grid.text(paste0("R² = ",
 dev.off()
 
 
-# GGPLOT2 tutorial with time ----------------------------------------------
+
+# TUT3: PLOTTING TIME SERIES WITH GGPLOT2 ---------------------------------------
 # Tutorial from: http://neondataskills.org/R/time-series-plot-ggplot/
 
 # load libraries
@@ -420,7 +429,7 @@ gg.2011
 
 
 
-# DRAWING ON DIAGRAM ------------------------------------------------------
+# TUT4: DRAWING ON DIAGRAM ------------------------------------------------------
 
 # Source: https://stat.ethz.ch/R-manual/R-devel/library/grid/html/grid.text.html
 
@@ -435,6 +444,7 @@ grid.text("SOMETHING NICE AND BIG", x=x, y=y, rot=rot,
 
 
 grid.newpage()
+
 draw.text <- function(just, i, j) {
   grid.text("ABCD", x=x[j], y=y[i], just=just)
   grid.text(deparse(substitute(just)), x=x[j], y=y[i] + unit(2, "lines"),
@@ -463,8 +473,59 @@ draw.text(c("left"), 2, 4)
 draw.text(c("right"), 3, 4)
 draw.text(c("centre"), 4, 4)
 
-
-# GRID ARRANGE  -----------------------------------------------------------
+# TUT5: GRID ARRANGE  -----------------------------------------------------------
 
 # https://cran.r-project.org/web/packages/gridExtra/vignettes/arrangeGrob.html
 # http://www.sthda.com/english/wiki/ggplot2-easy-way-to-mix-multiple-graphs-on-the-same-page-r-software-and-data-visualization
+# http://r-statistics.co/ggplot2-Tutorial-With-R.html
+
+library(grid)
+my_grob <- grobTree(textGrob("This text is at x=0.1 and y=0.9, relative!\n Anchor point is at 0,0", x=0.1,  y=0.9, hjust=0,
+                            gp=gpar(col="firebrick", fontsize=25, fontface="bold")))
+ggplot(mtcars, aes(x=cyl)) + geom_bar() + annotation_custom(my_grob) + labs(title="Annotation Example")
+
+
+# TUT6: SPATIAL DATA ------------------------------------------------------
+
+# Tutorial: https://www.codementor.io/spark/tutorial/exploratory-geographical-data-using-sparkr-and-ggplot2
+# https://github.com/jadianes/spark-r-notebooks/blob/master/notebooks/nb1-spark-sql-basics/nb1-spark-sql-basics.ipynb
+
+
+population_data_files_url <- 'http://www2.census.gov/acs2013_1yr/pums/csv_pus.zip'
+housing_data_files_url <- 'http://www2.census.gov/acs2013_1yr/pums/csv_hus.zip'
+
+library(RCurl)
+
+population_data_file <- getBinaryURL(population_data_files_url)
+
+# Set Spark home and R libs
+Sys.setenv(SPARK_HOME='C:/programs/spark-2.0.2-bin-hadoop2.7')
+.libPaths(c(file.path(Sys.getenv('SPARK_HOME'), 'R', 'lib'), .libPaths()))
+
+library(SparkR, lib.loc = c(file.path(Sys.getenv("SPARK_HOME"), "R", "lib")))
+library(rJava)
+library(backports)
+
+sc <- sparkR.session(spark.master='spark://169.254.206.2:7077', sparkPackages="com.databricks:spark-csv_2.11:1.2.0")
+
+housing_a_file_path <- file.path('', 'nfs','data','2013-acs','ss13husa.csv')
+housing_b_file_path <- file.path('', 'nfs','data','2013-acs','ss13husb.csv')
+
+housing_a_df <- read.df(sc, 
+                        housing_a_file_path, 
+                        header='true', 
+                        source = "com.databricks.spark.csv", 
+                        inferSchema='true')
+
+housing_b_df <- read.df(sqlContext, 
+                        housing_b_file_path, 
+                        header='true', 
+                        source = "com.databricks.spark.csv", 
+                        inferSchema='true')
+
+
+# TUT7: SPATIAL DATA2 -----------------------------------------------------
+
+# http://spatial.ly/wp-content/uploads/2013/12/intro-spatial-rl-3.pdf
+
+
