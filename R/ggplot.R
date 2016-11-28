@@ -506,7 +506,7 @@ library(SparkR, lib.loc = c(file.path(Sys.getenv("SPARK_HOME"), "R", "lib")))
 library(rJava)
 library(backports)
 
-sc <- sparkR.session(spark.master='spark://169.254.206.2:7077', sparkPackages="com.databricks:spark-csv_2.11:1.2.0")
+sc <- sparkR.session(spark.master='local', sparkPackages="com.databricks:spark-csv_2.11:1.2.0")
 
 housing_a_file_path <- file.path('', 'nfs','data','2013-acs','ss13husa.csv')
 housing_b_file_path <- file.path('', 'nfs','data','2013-acs','ss13husb.csv')
@@ -528,4 +528,231 @@ housing_b_df <- read.df(sqlContext,
 
 # http://spatial.ly/wp-content/uploads/2013/12/intro-spatial-rl-3.pdf
 
+x <- 1:400
+y <- sin(x/10) * exp (x* -0.01)
+
+plot (x, y)
+
+setwd("C:\\Users\\JYESOH\\Desktop\\GIT\\useful.scripts\\R\\datasets")
+
+library(ggmap)      # extends ggplot2 for maps
+library(rgdal)      # spatial data 
+library(rgeos)      # vector data 
+library(maptools)   # mapping functions
+library(plyr)       # processing data
+library(tidyr)      # processing data
+library(tmap)       # creating maps
+
+lnd <- readOGR(dsn = "map", layer = "london_sport")
+head(lnd@data, n = 2)
+mean(lnd$Partic_Per)
+
+# plot all vectors
+plot(lnd) 
+
+# based on certain criteria
+sel <- lnd$Partic_Per > 20 & lnd$Partic_Per < 25
+plot(lnd[sel, ]) 
+
+# colours
+plot(lnd, col = "lightblue")
+sel <- lnd$Partic_Per > 25
+plot(lnd[ sel, ], col = "turquoise", add = TRUE) 
+
+
+# spatial map
+library(rgeos)
+
+par(mfrow=c(2,1))
+plot(lnd, col = "grey")                             ## plot basemap 
+
+## find London's geographic centroid (add ", byid = T" for all)
+cent_lnd <- gCentroid(lnd[lnd$name == "City of London",])       ## getting the centroid coordinate of london
+points(cent_lnd, cex = 3)
+
+## set 10 km buffer
+lnd_buffer <- gBuffer(spgeom = cent_lnd, width = 10000) 
+
+## method 1 of subsetting selects any intersecting zones
+lnd_central <- lnd[lnd_buffer,] # the selection is too big!
+
+## test the selection for the previous method - uncomment below
+plot(lnd_central, col = "lightblue", add = T)
+plot(lnd_buffer, add = T) # some areas just touch the buffer
+
+## method2 of subsetting selects only points within the buffer
+lnd_cents <- SpatialPoints(coordinates(lnd),
+                           proj4string = CRS(proj4string(lnd))) ## create spatialpoints, obtain the crs by using
+                                                                ## proj4string; finding the centroids of all
+sel <- lnd_cents[lnd_buffer,]                                   ## select centroids of cities inside buffer
+points(sel)                                                     ## show where the points are located
+lnd_central <- lnd[sel,]                                        ## select zones intersecting w. sel
+plot(lnd_central, add = T, col = "lightslateblue", 
+     border = "grey")
+plot(lnd_buffer, add = T, border = "red", lwd = 2)
+
+## Add text to the plot!
+text(coordinates(cent_lnd), "Central\nLondon")
+
+
+############## Selecting quadrants
+
+dev.off()
+## create outline of london by merging all polygons 
+london = gUnaryUnion(lnd, lnd$dummy)
+london = SpatialPolygonsDataFrame(london, data.frame(dummy = c("london")), match.ID = FALSE)   ## adding dataframe
+
+## centroid of london
+centrelondon = gCentroid(london, byid = TRUE)
+
+# coordinates for start and end
+c1 = c(centrelondon$x, centrelondon$x)
+c2 = c(90, -90)
+c3 = c(90, -90)
+c4 = c(centrelondon$y,centrelondon$y)
+
+# using line strings
+L1 = Line(cbind(c1, c2))
+L2 = Line(cbind(c3, c4))
+
+# create lines
+Ln1 = Lines(list(L1), ID = "a")
+Ln2 = Lines(list(L2), ID = "b")
+
+# convert the lines into SpatialLines
+Ls1 <- SpatialLines(LinesList = list(Ln1))
+Ls2 <- SpatialLines(LinesList = list(Ln2))
+
+# convert into SpatialLinesDataFrame
+Longitude = SpatialLinesDataFrame(Ls1, data.frame(Z = c("1", "2"), row.names = c("a","b")))
+Latitude = SpatialLinesDataFrame(Ls2, data.frame(Z = c("1", "2"), row.names = c("a","b")))
+
+# test whether or not coordinate is east or north
+## east/west
+east <- coordinates(lnd)[,1] > Longitude@lines[[1]]@Lines[[1]]@coords[,1][1]    # each coordinate in london 
+west <- coordinates(lnd)[,1] < Longitude@lines[[1]]@Lines[[1]]@coords[,1][1]
+## north/south
+north <- coordinates(lnd)[,2] > Latitude@lines[[1]]@Lines[[1]]@coords[,2][1]
+south <-coordinates(lnd)[,2] < Latitude@lines[[1]]@Lines[[1]]@coords[,2][1]
+
+lnd@data$quadrant[east & north] <- "northeast"
+lnd@data$quadrant[west & north] <- "northwest"
+lnd@data$quadrant[east & south] <- "southeast"
+lnd@data$quadrant[west & south] <- "southwest"
+#lnd@data    # data component
+
+summary(lnd)
+plot(lnd)
+
+plot(lnd)
+plot(lnd[east & north,],add = TRUE, col = "red" )
+plot(lnd[west & north,],add = TRUE, col = "blue" )
+plot(lnd[east & south,],add = TRUE, col = "green" )
+plot(lnd[west & south,],add = TRUE, col = "yellow" )        
+llgridlines(lnd, lty= 3, side ="EN", offset = -0.5)         # plotting grid lines
+
+############## Creating new vector data
+
+## creating new vector data
+
+vec <- vector(mode = "numeric", length = 3)
+df <- data.frame(x = 1:3, y = c(1/2, 2/3, 3/4))
+
+class(vec)
+class(df)
+
+## new data
+
+mat <- as.matrix(df)                                        # create matrix object with as.matrix
+
+sp1 <- SpatialPoints(coords = mat)
+class(sp1)
+
+spdf <- SpatialPointsDataFrame(sp1, data = df)
+class(spdf)
+
+############# Setting projections
+
+proj4string(lnd) <- NA_character_ # remove CRS information from lnd
+proj4string(lnd) <- CRS("+init=epsg:27700") # assign a new CRS
+
+# EPSG codes available here: http://www.epsg-registry.org/ 
+###################################################################
+EPSG <- make_EPSG() # create data frame of available EPSG codes
+EPSG[grepl("WGS 84$", EPSG$note), ] # search for WGS 84 code
+###################################################################
+
+lnd84 <- spTransform(lnd, CRS("+init=epsg:4326")) # reproject
+saveRDS(object = lnd84, file = "map\\lnd84.Rds")
+
+# remove
+rm(lnd84)
+
+############# Attribute joins
+library(rgdal)
+
+lnd <- readOGR(dsn = "map", "london_sport")
+plot(lnd)
+nrow(lnd) 
+
+# new crime data object
+crime_data <- read.csv("map\\mps-recordedcrime-borough.csv",
+                       stringsAsFactors = FALSE)
+
+head(crime_data, 3)                                                    # display first 3 lines
+head(crime_data$CrimeType)                                             # information about crime type
+
+crime_theft <- crime_data[crime_data$CrimeType == "Theft & Handling", ]
+head(crime_theft, 2)                              # take a look at the result (replace 2 with 10 to see more rows)
+
+# Calculate the sum of the crime count for each district, save result
+crime_ag <- aggregate(CrimeCount ~ Borough, FUN = sum, data = crime_theft)
+# Show the first two rows of the aggregated crime data
+head(crime_ag, 2)
+
+# Compare the name column in lnd to Borough column in crime_ag to see which rows match.
+lnd$name %in% crime_ag$Borough
+
+# Return rows which do not match
+lnd$name[!lnd$name %in% crime_ag$Borough] 
+crime_ag$Borough[!crime_ag$Borough %in% lnd$name]
+
+names(crime_ag)
+crime_ag[crime_ag$Borough == 'NULL' & crime_ag$CrimeCount < 4000,]
+
+library(dplyr)
+
+head(lnd$name)
+head(crime_ag$Borough) 
+crime_ag <- rename(crime_ag, name = Borough)
+lnd@data <- left_join(lnd@data, crime_ag)
+
+
+library(tmap)
+qtm(lnd, "CrimeCount") # plot the basic map
+qtm(lnd, "Partic_Per")
+
+
+
+library(rgdal)
+# create new stations object using the "lnd-stns" shapefile.
+stations <- readOGR(dsn = "map", layer = "lnd-stns")
+proj4string(stations) # this is the full geographical detail.
+proj4string(lnd) # what's the coordinate reference system (CRS)
+bbox(stations) # the extent, 'bounding box' of stations
+bbox(lnd) # return the bounding box of the lnd object
+
+# Create reprojected stations object
+stations27700 <- spTransform(stations, CRSobj = CRS(proj4string(lnd))) 
+stations <- stations27700 # overwrite the stations object
+rm(stations27700) # remove the stations27700 object to clear up
+plot(lnd) # plot London for context (see Figure 9)
+points(stations) # overlay the station points
+
+stations_backup <- stations # backup the stations object
+stations <- stations_backup[lnd, ]
+plot(stations) # test the clip succeeded (see Figure 10)
+
+sel <- over(stations_backup, lnd)
+stations2 <- stations_backup[!is.na(sel[,1]),]
 
