@@ -733,6 +733,7 @@ qtm(lnd, "CrimeCount") # plot the basic map
 qtm(lnd, "Partic_Per")
 
 
+############# Clipping data
 
 library(rgdal)
 # create new stations object using the "lnd-stns" shapefile.
@@ -744,15 +745,152 @@ bbox(lnd) # return the bounding box of the lnd object
 
 # Create reprojected stations object
 stations27700 <- spTransform(stations, CRSobj = CRS(proj4string(lnd))) 
-stations <- stations27700 # overwrite the stations object
-rm(stations27700) # remove the stations27700 object to clear up
-plot(lnd) # plot London for context (see Figure 9)
-points(stations) # overlay the station points
+stations <- stations27700                         # overwrite the stations object
+rm(stations27700)                                 # remove the stations27700 object to clear up
+plot(lnd)                                         # plot London for context (see Figure 9)
+points(stations)                                  # overlay the station points
 
-stations_backup <- stations # backup the stations object
+# method 1
+stations_backup <- stations                       # backup the stations object
 stations <- stations_backup[lnd, ]
-plot(stations) # test the clip succeeded (see Figure 10)
+plot(stations)                                    # test the clip succeeded (see Figure 10)
 
-sel <- over(stations_backup, lnd)
-stations2 <- stations_backup[!is.na(sel[,1]),]
+#method 2
+sel <- over(stations_backup, lnd)                 # target and source layers
+stations2 <- stations_backup[!is.na(sel[,1]),]    # rows which are NOT na from the first column of sel
+
+############# Spatial aggregation
+
+stations_agg <- aggregate(x = stations["CODE"], by = lnd, FUN = length)
+head(stations_agg@data)
+names(stations@data)
+
+lnd$n_points <- stations_agg$CODE
+
+lnd_n <- aggregate(stations["NUMBER"], by = lnd, FUN = mean)
+lnd_n@data
+
+# plotting colours
+brks <- quantile(lnd_n$NUMBER)
+labs <- grey.colors(n = 4)
+q <- cut(lnd_n$NUMBER, brks, labels = labs,
+         include.lowest = T)
+summary(q)                                       # check what we've created
+
+
+# plotting map
+qc <- as.character(q)                            # convert to character class to plot
+plot(lnd_n, col = qc)                            # plot (not shown in printed tutorial)
+legend(legend = paste0("Q", 1:4), fill = levels(q), "topright")
+areas <- sapply(lnd_n@polygons, function(x) x@area)
+
+plot(lnd_n$NUMBER, areas)
+
+levels(stations$LEGEND)                            # see A roads and rapid transit stations (RTS) (not shown)
+sel <- grepl("A Road Sing|Rapid", stations$LEGEND) # selection for plotting; A Road Sing or Rapid
+sym <- as.integer(stations$LEGEND[sel])            # symbols
+points(stations[sel,], pch = sym)                  # plot points
+legend(legend = c("A Road", "RTS"), "bottomright", pch = unique(sym)) # plot legend
+ 
+
+# TUT8: TMAP, GGPLOT, LEAFLET ---------------------------------------------
+
+## TMAP
+
+vignette(package = "tmap") # available vignettes in tmap
+vignette("tmap-nutshell")
+
+# Create our first tmap map (not shown)
+qtm(shp = lnd, fill = "Partic_Per", fill.palette = "-Blues")
+qtm(shp = lnd, fill = c("Partic_Per", "Pop_2001"), fill.palette = c("Blues"), ncol = 2)
+
+lnd@data$Pop_2001 <- as.integer(lnd@data$Pop_2001)
+
+tm_shape(lnd) +
+  tm_fill("Pop_2001", thres.poly = 0) +
+  tm_facets("name", free.coords=TRUE, drop.shapes=TRUE) +
+  tm_layout(legend.show = TRUE, title.position = c("center", "center"), title.size = 20)
+
+
+## GGMAP
+
+p <- ggplot(lnd@data, aes(Partic_Per, Pop_2001))
+p + geom_point()
+p + geom_point(aes(colour=Partic_Per, size=Pop_2001)) # not shown
+p + geom_point(aes(colour = Partic_Per, size = Pop_2001)) +
+  geom_text(size = 2, aes(label = name))
+
+
+library(rgeos)
+lnd_f <- fortify(lnd)               # make as data.frame
+
+lnd$id <- row.names(lnd)            # allocate an id variable to the sp data
+head(lnd@data, n = 2)               # final check before join (requires shared variable name)
+
+library(dplyr)
+lnd_f <- left_join(lnd_f, lnd@data) # join the data
+
+map <- ggplot(lnd_f, aes(long, lat, group = group, fill = Partic_Per)) +
+  geom_polygon() +
+  coord_equal() +
+  labs(x = "Easting (m)", y = "Northing (m)",
+       fill = "% Sports\nParticipation") +
+  ggtitle("London Sports Participation")
+
+map + scale_fill_gradient(low = "white", high = "black")
+
+
+## Leaflet
+
+library(leaflet)
+leaflet() %>%
+  addTiles() %>%
+  addPolygons(data = lnd84)
+
+
+london_data <- read.csv("datasets\\map\\census-historic-population-borough.csv")
+
+library(tidyr)                                                           # if not install it, or skip the next two steps
+ltidy <- gather(london_data, date, pop, -Area.Code, -Area.Name)
+head(ltidy, 2)                                                           # check the output (not shown)
+head(london_data, 2)
+
+
+ltidy <- rename(ltidy, ons_label = Area.Code)                            # rename Area.code variable
+lnd_f <- left_join(lnd_f, ltidy)                                         #
+head(lnd_f, 2)                                                           #    
+
+lnd_f$date <- gsub(pattern = "Pop_", replacement = "", lnd_f$date)       # replace the name values
+
+ggplot(data = lnd_f,                                                     # the input data
+       aes(x = long, y = lat, fill = pop/1000, group = group)) +         # define variables
+  geom_polygon() +                                                       # plot the boroughs
+  geom_path(colour="black", lwd=0.05) +                                  # borough borders
+  coord_equal() +                                                        # fixed x and y scales
+  facet_wrap(~ date) +                                                   # one plot per time slice
+  scale_fill_gradient2(low = "blue", mid = "grey", high = "red",         # colors
+                       midpoint = 150, name = "Population\n(thousands)") + # legend options
+  theme(axis.text = element_blank(),                                     # change the theme options
+        axis.title = element_blank(),                                    # remove axis titles
+        axis.ticks = element_blank())                                    # remove axis ticks
+
+
+# http://docs.ggplot2.org/current/geom_map.html
+# http://zevross.com/blog/2014/07/16/mapping-in-r-using-the-ggplot2-package/
+
+crimes <- data.frame(state = tolower(rownames(USArrests)), USArrests)
+crimesm <- reshape2::melt(crimes, id = 1)
+
+states_map <- map_data("state")
+ggplot(crimes, aes(map_id = state)) +
+  geom_map(aes(fill = Murder), map = states_map) +
+  expand_limits(x = states_map$long, y = states_map$lat)
+
+last_plot() + coord_map()
+ggplot(crimesm, aes(map_id = state)) +
+  geom_map(aes(fill = value), map = states_map) +
+  expand_limits(x = states_map$long, y = states_map$lat) +
+  facet_wrap( ~ variable)
+
+
 

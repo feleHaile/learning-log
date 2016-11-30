@@ -1,5 +1,4 @@
 ## renaming rows
-
 colnames(variable) <- "newname"
 
 ########################################
@@ -11,11 +10,13 @@ housing.sum <- aggregate(housing["Home.Value"], housing["State"], FUN=mean)
 # melt
 # dcast
 
-
 ########################################
 # joins: dplyr
 # melt/cast: plyr
 # split and apply data functions: ddply
+
+
+# dplyr -------------------------------------------------------------------
 
 
 ## merging tables based on one variable
@@ -84,6 +85,9 @@ print(fj)
 
 ########################################
 
+# reshape -----------------------------------------------------------------
+
+
 ## long to wide variable
 # based on tutorial: https://tgmstat.wordpress.com/2013/10/31/reshape-and-aggregate-data-with-the-r-package-reshape2/
 
@@ -105,6 +109,14 @@ acast(data = melted, formula = Month ~ variable, fun.aggregate =mean,
 
 ########################################
 
+# ddply -------------------------------------------------------------------
+
 ## ddply 
 # http://www.cookbook-r.com/Manipulating_data/Summarizing_data/
 # https://www.rdocumentation.org/packages/plyr/versions/1.8.4/topics/ddply
+
+
+
+# # tidyr -----------------------------------------------------------------
+??tidyr
+library(tidyr)
