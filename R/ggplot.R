@@ -893,4 +893,12 @@ ggplot(crimesm, aes(map_id = state)) +
   facet_wrap( ~ variable)
 
 
+# ddply = dataframe to dataframe
+# dlply = dataframe to list (getting coefficients from model outputs)
+# ldply = list to dataframe (fitting multiple models)
 
+
+
+
+# https://rpubs.com/chrisbrunsdon/99675
+# https://pakillo.github.io/R-GIS-tutorial/

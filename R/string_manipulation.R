@@ -6,6 +6,9 @@
 # Regular expressions: 
 # http://stat545.com/block022_regular-expression.html
 
+# grep --------------------------------------------------------------------
+
+
 library(random)
 string <- c(randomStrings(n=1000, len=5))
 
@@ -40,6 +43,22 @@ grep("[a-z]{3}", string, value=TRUE) # three alphabets, lower case
 grep("[A-Z]{4}", string, value=TRUE) # three alphabetes, upper case
 grep("\S", string, value=TRUE)       # not a space
 grep("[!]", string, value= TRUE)    # punctuation characters
+
+
+# substring ---------------------------------------------------------------
+
+substr("abcdef", 2, 4)
+substring("abcdef", 1:6, 1:6)
+## strsplit is more efficient ...
+
+substr(rep("abcdef", 8), 
+       1:4, 4:5)
+x <- c("asfef", "qwerty", "yuiop[", "b", "stuff.blah.yech")
+substr(x, 2, 5)
+substring(x, 2, 4:6)
+
+substring(x, 2) <- c("..", "+++")
+x
 
 ## Numeric manipulation
 
