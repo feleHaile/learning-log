@@ -2,22 +2,14 @@
 colnames(variable) <- "newname"
 
 ########################################
-# mutate
-housing.sum <- aggregate(housing["Home.Value"], housing["State"], FUN=mean)
 
-# aggregate
-
-# melt
-# dcast
+# dplyr: joins and using piping (%)
+# plyr: summarize, transform, etc. (through ddply)
+# reshape: melt and cast
 
 ########################################
-# joins: dplyr
-# melt/cast: plyr
-# split and apply data functions: ddply
 
-
-# dplyr -------------------------------------------------------------------
-
+# dplyr - joins -----------------------------------------------------------
 
 ## merging tables based on one variable
 # based on tutorial: http://stat545.com/bit001_dplyr-cheatsheet.html
@@ -82,6 +74,120 @@ print(aj)
 
 fj <- full_join(superheroes, publishers, by="publisher")
 print(fj)
+
+# dplyr - piping ----------------------------------------------------------
+
+setwd('C:\\Users\\JYESOH\\Desktop\\GIT\\useful.scripts\\R\\datasets')
+library(dplyr)
+library(downloader)
+url <- "https://raw.githubusercontent.com/genomicsclass/dagdata/master/inst/extdata/msleep_ggplot2.csv"
+filename <- "msleep_ggplot2.csv"
+if (!file.exists(filename)) download(url,filename)
+msleep <- read.csv("msleep_ggplot2.csv")
+head(msleep)
+names(msleep)
+
+# select() - similar to excel filter
+# filter() - similar to excel filter
+# arrange() - similar to excel filter
+# mutate() - similar to formula
+# summarise() - similar to pivot
+# group_by()
+
+# select
+
+## using the select function
+sleepData <- select(msleep, name, sleep_total)
+head(sleepData)
+
+## select all the columns except this one
+head(select(msleep, -name))
+
+## selecting a range of columns
+head(select(msleep, name:order))
+
+## select based on a particular string
+head(select(msleep, starts_with("sl")))
+
+#starts_with, ends_with, contains, matches
+#num_range, one_of, everything
+#current_vars()
+
+# filter
+filter(msleep, sleep_total >= 16)
+filter(msleep, sleep_total >= 16, bodywt >= 1)
+filter(msleep, order %in% c("Perissodactyla", "Primates"))
+
+# piping function
+msleep %>% 
+  select(name, sleep_total) %>% 
+  head
+
+# arrange
+msleep %>% arrange(order) %>% head
+
+# select, arrange
+
+msleep %>% 
+  select(name, order, sleep_total) %>%
+  arrange(order, sleep_total) %>% 
+  head
+
+msleep %>% 
+  select(name, order, sleep_total) %>%
+  arrange(order, sleep_total) %>% 
+  filter(sleep_total >= 16)
+
+msleep %>% 
+  select(name, order, sleep_total) %>%
+  arrange(order, -sleep_total) %>% 
+  filter(sleep_total >= 16)
+
+msleep %>% 
+  select(name, order, sleep_total) %>%
+  arrange(order, desc(sleep_total)) %>% 
+  filter(sleep_total >= 16)
+
+# mutate
+msleep %>% 
+  mutate(rem_proportion = sleep_rem / sleep_total) %>%
+  head
+
+msleep %>% 
+  mutate(rem_proportion = sleep_rem / sleep_total, 
+         bodywt_grams = bodywt * 1000) %>%
+  head
+
+# summarize
+msleep %>% 
+  summarise(avg_sleep = mean(sleep_total))
+
+msleep %>% 
+  summarise(avg_sleep = mean(sleep_total), 
+            min_sleep = min(sleep_total),
+            max_sleep = max(sleep_total),
+            total = n())
+
+# using pivot
+msleep %>% 
+  group_by(order) %>%  #pivot table columns
+  summarise(avg_sleep = mean(sleep_total), # pivot table rows
+            min_sleep = min(sleep_total), 
+            max_sleep = max(sleep_total),
+            total = n())
+
+head(msleep)
+
+
+########### EXERCISE
+msleep %>% 
+  filter(order == 'Primates') %>%
+  select(sleep_total) %>%
+  mutate(avg_sleep = mean(sleep_total))
+
+msleep %>% 
+  group_by(order) %>%
+  summarize(avg_sleep = mean(sleep_total))
 
 ########################################
 
@@ -190,11 +296,10 @@ base2 <- ddply(baseball, .(id), mutate,
                career_year = year - min(year) + 1
 )
 
-
 # ddply by hadley ---------------------------------------------------------
 
 # http://plyr.had.co.nz/09-us
-
+# see the other tutorial folder
 
 # # tidyr -----------------------------------------------------------------
 ??tidyr
