@@ -16,7 +16,7 @@ colnames(variable) <- "newname"
 
 # load library
 library(dplyr) # library for data manipulation
-library(readr)
+library(readr) 
 
 # data frame 1
 superheroes <- "

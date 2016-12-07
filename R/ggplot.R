@@ -899,6 +899,9 @@ ggplot(crimesm, aes(map_id = state)) +
 
 
 
+# More resources ------------------------------------------------------------
 
+# https://www.datacamp.com/community/tutorials/15-questions-about-r-plots#gs.qZ4VmBA
 # https://rpubs.com/chrisbrunsdon/99675
 # https://pakillo.github.io/R-GIS-tutorial/
+# http://www.sthda.com/english/wiki/ggplot2-pie-chart-quick-start-guide-r-software-and-data-visualization
