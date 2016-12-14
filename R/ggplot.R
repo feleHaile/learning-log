@@ -905,3 +905,5 @@ ggplot(crimesm, aes(map_id = state)) +
 # https://rpubs.com/chrisbrunsdon/99675
 # https://pakillo.github.io/R-GIS-tutorial/
 # http://www.sthda.com/english/wiki/ggplot2-pie-chart-quick-start-guide-r-software-and-data-visualization
+# https://learnr.wordpress.com/2010/01/26/ggplot2-quick-heatmap-plotting/
+# http://www.sthda.com/english/wiki/ggplot2-easy-way-to-mix-multiple-graphs-on-the-same-page-r-software-and-data-visualization
