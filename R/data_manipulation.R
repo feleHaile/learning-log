@@ -306,3 +306,7 @@ base2 <- ddply(baseball, .(id), mutate,
 library(tidyr)
 
 
+
+# which: getting index that satisfy the condition
+
+# which(data$column < 1000) or which (is.na(data$column))
