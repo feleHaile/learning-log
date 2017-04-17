@@ -5,6 +5,7 @@
 
 # Regular expressions: 
 # http://stat545.com/block022_regular-expression.html
+# http://www.endmemo.com/program/R/gsub.php
 
 # grep --------------------------------------------------------------------
 

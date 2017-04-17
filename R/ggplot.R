@@ -909,7 +909,9 @@ ggplot(crimesm, aes(map_id = state)) +
 # http://www.sthda.com/english/wiki/ggplot2-easy-way-to-mix-multiple-graphs-on-the-same-page-r-software-and-data-visualization
 
 
-
+# http://www.cookbook-r.com/Manipulating_data/Summarizing_data/#using-ddply
+# http://www.cookbook-r.com/Manipulating_data/
+# http://www.sthda.com/english/wiki/ggplot2-error-bars-quick-start-guide-r-software-and-data-visualization
 
 # standard deviation
-# labelling the plots
+# labelling the points etc
