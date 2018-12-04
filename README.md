@@ -1,4 +1,3 @@
-Useful
-======
+# Useful stuff
 
-Codes that I find useful for my work
+Commands/shortcuts/scripts that I find useful for my work
