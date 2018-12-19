@@ -76,6 +76,7 @@ This is a learning log to document links or keywords (package names, people, fra
 
 - [A/B testing](https://algobeans.com/2017/07/19/laymans-guide-to-ab-testing/)
 - [Data science curriculum](https://medium.com/@ben_lau93/data-science-curriculum-from-scratch-2018-part-1-35061303c385)
+- Time series ARIMA
 
 ### Simulation
 
