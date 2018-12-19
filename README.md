@@ -55,6 +55,7 @@ This is a learning log to document links or keywords (package names, people, fra
 - [Google's crashcourse on ML (tensorflow)](https://developers.google.com/machine-learning/crash-course/)
 - CS188 Spring 2013/ AI Saturdays
 - [Guide to Stanford's AI courses](https://huyenchip.com/2018/03/30/guide-to-Artificial-Intelligence-Stanford.html)
+- [Deep learning with Pytorch](https://pytorch.org/tutorials/intermediate/char_rnn_classification_tutorial.html)
 
 ### Analysis: optimization (non-linear programming)
 
@@ -71,6 +72,7 @@ This is a learning log to document links or keywords (package names, people, fra
 ### Analysis: text analytics
 
 - [Word2Vec tutorial](https://nathanrooy.github.io/posts/2018-03-22/word2vec-from-scratch-with-python-and-numpy/#)
+- [PyTorch word embeddings](https://pytorch.org/tutorials/beginner/nlp/word_embeddings_tutorial.html)
 
 ### Analysis: others
 
