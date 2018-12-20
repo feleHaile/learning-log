@@ -2,6 +2,14 @@
 
 This is a learning log to document links or keywords (package names, people, frameworks, topics) that I have read/seen and think are useful (~~strikethrough~~) or want to learn more about (no strikethrough) by completing their "Hello World" exercise if available.
 
+## Learning portals
+
+I love these sites for learning:
+
+- Datacamp
+- Udacity
+- Codecademy
+
 ## Topics
 
 ### Interviews/ inspirational
